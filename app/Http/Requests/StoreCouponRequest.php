@@ -24,7 +24,7 @@ class StoreCouponRequest extends FormRequest
         return [
             'name' => 'required',
             'coupon_quantity' => 'required',
-            'category' => 'required',
+            'category_coupon' => 'required',
             'start_date' => 'required',
             'end_date' => 'required',
             'start_time' =>'required',

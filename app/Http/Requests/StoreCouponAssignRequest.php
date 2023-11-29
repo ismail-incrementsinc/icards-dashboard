@@ -26,7 +26,7 @@ class StoreCouponAssignRequest extends FormRequest
             'email' => 'required',
             'organization' => 'required',
             'collected_by' => 'required',
-            'coupon_type' => 'required',
+            'category' => 'required',
             'number_of_coupon' => 'required',
         ];
     }

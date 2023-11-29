@@ -42,7 +42,7 @@
                                 <div class="tab-content" id="pills-tabContent">
                                     <div class="tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab">
                                         <div class="row">
-                                            @foreach($coupons as $coupon)
+                                            @forelse($coupons as $coupon)
                                             <div class="col-md-4">
                                                 <div class="card-item">
                                                     <div class="card-text">
@@ -55,14 +55,17 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @endforeach
+                                            @empty
+                                                <span>There are no data.</span>
+                                            @endforelse
+
                                         </div>
                                     </div>
                                     @foreach($categories as $category)
                                     <div class="tab-pane fade" id="pills-{{$category->name}}" role="tabpanel" aria-labelledby="pills-{{$category->name}}-tab">
                                         <div class="row">
-                                            @foreach($coupons as $coupon)
-                                                @if($category->name == $coupon->category)
+                                            @forelse($coupons as $coupon)
+                                                @if($category->id == $coupon->category_coupon)
                                                     <div class="col-md-4">
                                                         <div class="card-item">
                                                             <div class="card-text">
@@ -76,7 +79,9 @@
                                                         </div>
                                                     </div>
                                                 @endif
-                                            @endforeach
+                                            @empty
+                                                <span>There are no data.</span>
+                                            @endforelse
                                         </div>
                                     </div>
                                     @endforeach

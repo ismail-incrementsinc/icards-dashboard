@@ -30,19 +30,41 @@ class CouponAssignController extends Controller
             'Authorization' => 'Token ' . $token,
         ])->get(config('config.base_url').'dashboard/admin-user/get-scanner');
 
-        $data = json_decode($response);
-        $assign_users = $data->data;
+        $analytics_response = Http::withHeaders([
+            'Authorization' => 'Token ' . $token,
+        ])->get(config('config.base_url').'dashboard/admin-user/analytics/');
 
-        $manager_response_data = json_decode($manager_response);
-        $manager_decode_data = $manager_response_data->data;
-
-        $scanner_data = json_decode($scanner_response);
-        $scanner_decode_users = $scanner_data->data;
-
-        if($data->status == 200){
-            return view('coupon-assign.index',compact('assign_users','manager_decode_data','scanner_decode_users'));
+        if ($response->status() == 200){
+            $data = json_decode($response);
+            $assign_users = $data->data;
         }else{
-            return "Something went wrong";
+            $assign_users = [];
+        }
+
+        if ($manager_response->status() == 200){
+            $manager_response_data = json_decode($manager_response);
+            $manager_decode_data = $manager_response_data->data;
+        }else{
+            $manager_decode_data = [];
+        }
+
+        if ($scanner_response->status() == 200){
+            $scanner_data = json_decode($scanner_response);
+            $scanner_decode_users = $scanner_data->data;
+        }else{
+            $scanner_decode_users = [];
+        }
+
+        if ($analytics_response->status() == 200){
+            $analytics_data = json_decode($analytics_response);
+        }else{
+            $analytics_data = [];
+        }
+
+        if($response->status() == 200){
+            return view('coupon-assign.index',compact('assign_users','manager_decode_data','scanner_decode_users','analytics_data'));
+        }else{
+            return $response;
         }
     }
 
@@ -56,10 +78,25 @@ class CouponAssignController extends Controller
             'Authorization' => 'Token ' . $token,
         ])->get(config('config.base_url').'dashboard/admin-user/assign-to');
 
-        $data = json_decode($response);
+        $category_response = Http::withHeaders([
+            'Authorization' => 'Token ' . $token,
+        ])->get(config('config.base_url').'categories/');
 
-        $users = $data->data;
-        return view('coupon-assign.create', compact('users'));
+        if ($category_response->status() == 200){
+            $categories_data = json_decode($category_response);
+            $categories = $categories_data->data;
+        }else{
+            $categories = [];
+        }
+
+        if ($response->status() == 200){
+            $data = json_decode($response);
+            $users = $data->data;
+        }else{
+            $users = [];
+        }
+
+        return view('coupon-assign.create', compact('users','categories'));
     }
 
     public function scannerCreate()
@@ -81,16 +118,14 @@ class CouponAssignController extends Controller
             'organization' => $request->input('organization'),
             'collected_by' => $request->input('collected_by'),
             'assign_to' => $request->input('assign_to'),
-            'coupon_type' => $request->input('coupon_type'),
+            'category' => $request->input('category'),
             'number_of_coupon' => $request->input('number_of_coupon'),
             'note' => $request->input('note'),
         ]);
-
-        $data = json_decode($response);
-        if($data->status == 200){
+        if($response->status() == 200){
             return redirect()->route('coupon-assign.index')->with('message', 'Coupon assigned successfully');
         }else{
-            return "Something went wrong";
+            return $response;
         }
     }
 
@@ -111,12 +146,10 @@ class CouponAssignController extends Controller
             'organization' => $request->input('organization'),
             'note' => $request->input('note'),
         ]);
-
-        $data = json_decode($response);
-        if($data->status == 200){
+        if($response->status() == 200){
             return redirect()->route('coupon-assign.index')->with('message', 'Scanner created successfully');
         }else{
-            return "Something went wrong";
+            return $response;
         }
     }
 
@@ -142,18 +175,35 @@ class CouponAssignController extends Controller
             'Authorization' => 'Token ' . $token,
         ])->get(config('config.base_url').'dashboard/admin-user/assign-to');
 
-        $user_data = json_decode($user_response);
+        $category_response = Http::withHeaders([
+            'Authorization' => 'Token ' . $token,
+        ])->get(config('config.base_url').'categories/');
 
-        $users = $user_data->data;
-
-
-        $data = json_decode($response);
-        $assign_users = $data->data;
-
-        if($data->status == 200){
-            return view('coupon-assign.edit',compact('assign_users','users'));
+        if($user_response->status() == 200){
+            $user_data = json_decode($user_response);
+            $users = $user_data->data;
         }else{
-            return "Something went wrong";
+            $users=[];
+        }
+
+        if ($response->status() == 200){
+            $data = json_decode($response);
+            $assign_users = $data->data;
+        }else{
+            $assign_users = [];
+        }
+
+        if ($category_response->status() == 200){
+            $categories_data = json_decode($category_response);
+            $categories = $categories_data->data;
+        }else{
+            $categories = [];
+        }
+
+        if($response->status() == 200){
+            return view('coupon-assign.edit',compact('assign_users','users','categories'));
+        }else{
+            return $response;
         }
     }
 
@@ -163,7 +213,6 @@ class CouponAssignController extends Controller
         $response = Http::withHeaders([
             'Authorization' => 'Token ' . $token,
         ])->get(config('config.base_url').'user/'.$scanner_id.'/');
-
 
         $data = json_decode($response);
         $assign_users = $data->data;
@@ -189,16 +238,15 @@ class CouponAssignController extends Controller
             'organization' => $request->input('organization'),
             'collected_by' => $request->input('collected_by'),
             'assign_to' => $request->input('assign_to'),
-            'coupon_type' => $request->input('coupon_type'),
+            'category' => $request->input('category'),
             'number_of_coupon' => $request->input('number_of_coupon'),
             'note' => $request->input('note'),
         ]);
 
-        $data = json_decode($response);
-        if($data->status == 200){
+        if($response->status() == 200){
             return redirect()->route('coupon-assign.index')->with('message', 'Assign coupon updated successfully');
         }else{
-            return "Something went wrong";
+            return $response;
         }
     }
 
@@ -212,9 +260,7 @@ class CouponAssignController extends Controller
             'company' => $request->input('organization'),
             'note' => $request->input('note'),
         ]);
-
-        $data = json_decode($response);
-        if($data->status == 200){
+        if($response->status() == 200){
             return redirect()->route('coupon-assign.index')->with('message', 'Scanner updated successfully');
         }else{
             return "Something went wrong";
@@ -233,12 +279,8 @@ class CouponAssignController extends Controller
             'ids' => $request->input('ids'),
         ]);
 
-        $data = json_decode($response);
-        if($data->status == 204){
-            return redirect()->route('coupon-assign.index')->with('message', 'Employee created successfully');
-        }else{
-            return "Something went wrong";
-        }
+        return redirect()->route('coupon-assign.index')->with('message', 'Employee created successfully');
+
     }
 
     public function scannerDestroy(Request $request)
@@ -250,13 +292,7 @@ class CouponAssignController extends Controller
             'ids' => $request->input('ids'),
         ]);
 
-        $data = json_decode($response);
-
-        if($data->status == 204){
-            return redirect()->route('coupon-assign.index')->with('message', 'Scanner deleted successfully');
-        }else{
-            return "Something went wrong";
-        }
+        return redirect()->route('coupon-assign.index')->with('message', 'Scanner deleted successfully');
     }
 
     public function exportExcelFile()
@@ -281,12 +317,43 @@ class CouponAssignController extends Controller
             'xlsx_file' => $request->input('xlsx_file'),
         ]);
 
-//        $data = json_decode($response);
-//        if($data->status == 200){
+        if($response->status() == 200){
             return redirect()->route('coupon-assign.index')->with('message', 'Excel file uploaded successfully');
-//        }else{
-//            return "Something went wrong";
-//        }
+        }else{
+            return $response;
+        }
+    }
+
+    public function exportParticipantsDownload()
+    {
+        $token = session('token');
+        $response = Http::withHeaders([
+            'Authorization' => 'Token ' . $token,
+        ])->get(config('config.base_url').'dashboard/admin-assign/exports-participants-data/');
+
+        if ($response->status() == 200){
+            $response_data = json_decode($response);
+            return $response_data->data;
+        }else{
+            return $response;
+        }
+
+    }
+
+    public function exportScannerDownload()
+    {
+        $token = session('token');
+        $response = Http::withHeaders([
+            'Authorization' => 'Token ' . $token,
+        ])->get(config('config.base_url').'dashboard/admin-assign/exports-scanner-data/');
+
+        if ($response->status() == 200){
+            $response_data = json_decode($response);
+            return $response_data->data;
+        }else{
+            return $response;
+        }
+
     }
 
 }

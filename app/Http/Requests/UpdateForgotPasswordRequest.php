@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCouponAssignRequest extends FormRequest
+class UpdateForgotPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,12 +22,7 @@ class UpdateCouponAssignRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'email' => 'required',
-            'organization' => 'required',
-            'collected_by' => 'required',
-            'category' => 'required',
-            'number_of_coupon' => 'required',
+            //
         ];
     }
 }

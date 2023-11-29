@@ -16,11 +16,11 @@
                             <div class="col-3">
                                 <div class="coupons-count w-100">
                                     <p>Total Coupons</p>
-                                    <h3>500</h3>
+                                    <h3>{{$analytics_data->total_coupons}}</h3>
                                 </div>
                                 <div class="coupons-count w-100">
                                     <p>Total Scanned</p>
-                                    <h3>500</h3>
+                                    <h3>{{$analytics_data->total_scanned}}</h3>
                                 </div>
                             </div>
                             <div class="col-9">
@@ -68,9 +68,9 @@
                                             <button class="custom-icon-btn dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                                             </button>
-                                            <div class="dropdown-menu dropdown-menu-right btn-sm" aria-labelledby="dropdownMenu2">
-                                                <button class="dropdown-item" type="button"><i class="fa-solid fa-arrows-rotate mr-2"></i> Refresh</button>
-                                                <button class="dropdown-item" type="button"><i class="fa-solid fa-download mr-2"></i> Export</button>
+                                            <div class="dropdown-menu dropdown-menu-right btn-sm mt-2" aria-labelledby="dropdownMenu2">
+                                                <button class="dropdown-item"><i class="fa-solid fa-arrows-rotate mr-2" ></i> Refresh</button>
+                                                <button class="dropdown-item" id="exportParticipants"><i class="fa-solid fa-download mr-2"></i> Export</button>
                                             </div>
                                         </div>
 
@@ -103,7 +103,7 @@
                                             <td>{{$assign_user->organization !=null ? $assign_user->organization : ''}}</td>
                                             <td>{{$assign_user->collected_by !=null ? $assign_user->collected_by : ''}}</td>
                                             <td>{{optional($assign_user->assign_to)->email}}</td>
-                                            <td>{{$assign_user->coupon_type !=null ? $assign_user->coupon_type : ''}}</td>
+                                            <td>{{optional($assign_user->category)->name}}</td>
                                             <td>{{$assign_user->number_of_coupon !=null ? $assign_user->number_of_coupon : ''}}</td>
                                             <td>{{$assign_user->coupon_redeemed !=null ? $assign_user->coupon_redeemed : ''}}</td>
                                             <td>
@@ -185,7 +185,7 @@
                                             <td>{{$assign_user->organization !=null ? $assign_user->organization : ''}}</td>
                                             <td>{{$assign_user->collected_by !=null ? $assign_user->collected_by : ''}}</td>
                                             <td>{{optional($assign_user->assign_to)->email}}</td>
-                                            <td>{{$assign_user->coupon_type !=null ? $assign_user->coupon_type : ''}}</td>
+                                            <td>{{optional($assign_user->category)->name}}</td>
                                             <td>{{$assign_user->number_of_coupon !=null ? $assign_user->number_of_coupon : ''}}</td>
                                             <td>{{$assign_user->coupon_redeemed !=null ? $assign_user->coupon_redeemed : ''}}</td>
                                             <td>
@@ -233,8 +233,8 @@
                                                 <i class="fa-solid fa-ellipsis-vertical"></i>
                                             </button>
                                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu2">
-                                                <button class="dropdown-item" type="button"><i class="fa-solid fa-arrows-rotate mr-2"></i> Refresh</button>
-                                                <button class="dropdown-item" type="button"><i class="fa-solid fa-download mr-2"></i> Export</button>
+                                                <button class="dropdown-item" ><i class="fa-solid fa-arrows-rotate mr-2"></i> Refresh</button>
+                                                <button class="dropdown-item" id="exportScanner"><i class="fa-solid fa-download mr-2"></i> Export</button>
                                             </div>
                                         </div>
 
@@ -261,7 +261,7 @@
                                             <td><input type="checkbox" name="sids" class="scannerCheckBoxClass" value="{{$scanner_decode_user->id}}"></td>
                                             <td>{{$scanner_decode_user->name !=null ? $scanner_decode_user->name : ''}}</td>
                                             <td>{{$scanner_decode_user->email !=null ? $scanner_decode_user->email : ''}}</td>
-                                            <td>{{$scanner_decode_user->info->company !=null ? $scanner_decode_user->info->company : ''}}</td>
+                                            <td>{{optional($scanner_decode_user->info)->company }}</td>
                                             <td>{{$scanner_decode_user->note !=null ? $scanner_decode_user->note : ''}}</td>
                                             <td>{{$scanner_decode_user->coupon_scan_count !=null ? $scanner_decode_user->coupon_scan_count : '0'}}</td>
                                             <td>
@@ -306,7 +306,63 @@
 @push('script')
     <script>
 
+        $(document).on('click','#exportParticipants',function (event) {
+            event.preventDefault();
+
+            // Set header if need any otherwise remove setup part
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('value')
+                }
+            });
+            $.ajax({
+                url: "{{route('export-participants-download')}}",// your request url
+                processData: false,
+                contentType: false,
+                type: 'GET',
+                success: function (data) {
+                    const link = document.createElement('a');
+                    link.href = data;
+                    link.setAttribute('download', 'participants_data.xlsx');
+                    link.click();
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+
+        });
+        $(document).on('click','#exportScanner',function (event) {
+            event.preventDefault();
+
+            // Set header if need any otherwise remove setup part
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="token"]').attr('value')
+                }
+            });
+            $.ajax({
+                url: "{{route('export-scanner-download')}}",// your request url
+                processData: false,
+                contentType: false,
+                type: 'GET',
+                success: function (data) {
+                    const link = document.createElement('a');
+                    link.href = data;
+                    link.setAttribute('download', 'scanner_data.xlsx');
+                    link.click();
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+
+        });
+
+
+
         $(function (e){
+
             $("#chkCheckAll").click(function(){
                 $(".checkBoxClass").prop('checked',$(this).prop('checked'))
             });
@@ -324,7 +380,6 @@
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="token"]').attr('value'),
-
                     }
                 });
 
@@ -336,12 +391,20 @@
                     contentType: false,
                     type: 'POST',
                     success: function (response) {
+                        toastr.options ={ "closeButton" : true, "progressBar" : true }
+                        toastr.success("Assign coupon deleted successfully");
+
                         setTimeout(function() {
                             location.reload();
-                        }, 3000);
+                        }, 2000);
                     },
                     error: function (err) {
-                        console.log(err);
+                        toastr.options ={ "closeButton" : true, "progressBar" : true }
+                        toastr.success("Assign coupon deleted successfully");
+
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
 
                     }
                 });
@@ -368,7 +431,6 @@
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="token"]').attr('value'),
-
                     }
                 });
 
@@ -380,12 +442,20 @@
                     contentType: false,
                     type: 'POST',
                     success: function (response) {
+                        toastr.options ={ "closeButton" : true, "progressBar" : true }
+                        toastr.success("Coupon manager successfully");
+
                         setTimeout(function() {
                             location.reload();
-                        }, 3000);
+                        }, 2000);
                     },
                     error: function (err) {
-                        console.log(err);
+                        toastr.options ={ "closeButton" : true, "progressBar" : true }
+                        toastr.success("Coupon manager successfully");
+
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
 
                     }
                 });
@@ -424,12 +494,20 @@
                     contentType: false,
                     type: 'POST',
                     success: function (response) {
+                        toastr.options ={ "closeButton" : true, "progressBar" : true }
+                        toastr.success("Coupon scanner deleted successfully");
+
                         setTimeout(function() {
                             location.reload();
-                        }, 3000);
+                        }, 2000);
                     },
                     error: function (err) {
-                        console.log(err);
+                        toastr.options ={ "closeButton" : true, "progressBar" : true }
+                        toastr.success("Coupon scanner deleted successfully");
+
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
 
                     }
                 });
@@ -471,7 +549,6 @@
 @endpush
 <script>
 
-
     function delete_function(objButton) {
         var url = objButton.value;
         $.ajax({
@@ -486,7 +563,7 @@
 
                 setTimeout(function() {
                     location.reload();
-                }, 3000);
+                }, 2000);
             },
             error: function (data) {
                 console.log(data);
@@ -494,5 +571,11 @@
             }
         })
     }
+
+</script>
+
+<script>
+
+
 
 </script>

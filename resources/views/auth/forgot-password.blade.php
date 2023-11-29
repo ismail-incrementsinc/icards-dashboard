@@ -1,14 +1,15 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Login | Digital cards</title>
+    <title>Forgot password | Digital cards</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="{{asset('assets/plugins/fontawesome-free/css/all.min.css')}}">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- icheck bootstrap -->
@@ -26,17 +27,6 @@
         body{
             font-family: 'Exo', sans-serif;;
         }
-
-        .password-icon{
-            position: relative;
-        }
-        .password-icon i{
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            right: 2%;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body class="hold-transition login-page">
@@ -50,11 +40,11 @@
                 </a>
             </div>
             <div class="login-header">
-                <h2>Login</h2>
-                <p class="login-box-msg">To login to the platform you need to enter the appropriate info below</p>
+                <h2>Forgot Password</h2>
+                <p class="login-box-msg">To forgot password to the platform you need to enter the appropriate info below</p>
             </div>
 
-            <form action="{{route('login-store')}}" method="POST">
+            <form action="{{route('forgot-password-store')}}" method="POST">
                 @csrf
                 <div class="form-group">
                     <label for="email">Email address</label>
@@ -63,34 +53,11 @@
                     <small id="email_error" class="form-text text-danger">{{ $message }}</small>
                     @enderror
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="password-icon">
-                        <input type="password" name="password"  class="form-control" id="password" placeholder="Enter your password">
-                        <i onClick="passwordShowHide()" id="eye" class="fa-solid fa-eye-slash"></i>
-                    </div>
-                    @error('password')
-                    <small id="password_error" class="form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-                <div class="row">
-                    <div class="col-8">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                            <label class="form-check-label" for="exampleCheck1">Remember me</label>
-                        </div>
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-4">
-                        <a href="{{route('forgot-password')}}">I forgot my password</a>
-                    </div>
-                    <!-- /.col -->
-                </div>
                 <div class="social-auth-links text-center mb-3">
                     <div class="common-btn">
-                        <button type="submit" class="custom-btn">Login</button>
+                        <button type="submit" class="custom-btn">Forgot password</button>
                     </div>
-                    <p class="text-center mt-3">Don’t have any account? <a href="{{route('register')}}">Create account</a></p>
+                    <p class="text-center mt-3"><a href="{{route('login')}}">Back to the login page</a></p>
                 </div>
             </form>
         </div>
@@ -110,34 +77,13 @@
 
 <script>
 
-    function passwordShowHide() {
-        let x = document.getElementById("password");
-        let eye = document.getElementById("eye");
-        if (x.type === "password") {
-            x.type = "text";
-            eye.classList.remove("fa-eye-slash");
-            eye.classList.add("fa-eye");
-        } else {
-            x.type = "password";
-            eye.classList.remove("fa-eye");
-            eye.classList.add("fa-eye-slash");
-        }
-    }
-
-
-    @if(Session::has('message'))
-        toastr.options ={ "closeButton" : true, "progressBar" : true }
-        toastr.success("{{ session('message') }}");
-    @endif
-
     @if(Session::has('warning'))
         toastr.options ={ "closeButton" : true, "progressBar" : true }
-        toastr.warning("{{ session('warning') }}");
+    toastr.warning("{{ session('warning') }}");
     @endif
-
-    @if(Session::has('error'))
+        @if(Session::has('error'))
         toastr.options ={ "closeButton" : true, "progressBar" : true }
-        toastr.error("{{ session('error') }}");
+    toastr.error("{{ session('error') }}");
     @endif
 </script>
 

@@ -46,7 +46,7 @@
 
                 setTimeout(function() {
                     location.reload();
-                }, 3000);
+                }, 2000);
             },
             error: function (data) {
                 var errorMessage = '<div class="card bg-danger">\n' +

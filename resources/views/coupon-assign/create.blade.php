@@ -1,5 +1,5 @@
 
-<form id="create-form">
+<form id="my-form">
     @csrf
     <div class="form-group">
         <label for="name">Name</label>
@@ -26,8 +26,8 @@
         <span class="text-danger" id="collected_by_error"></span>
     </div>
     <div class="form-group" id="assign_to">
-        <label for="assign_to">Assigned To</label>
-        <select class="form-control" name="assign_to" id="assign_to">
+        <label for="assign_to_field">Assigned To</label>
+        <select class="form-control" name="assign_to" id="assign_to_field">
             <option value="">Select user</option>
             @foreach($users as $user)
                 <option value="{{$user->id}}">{{$user->name}}</option>
@@ -36,15 +36,16 @@
         <span class="text-danger" id="assign_to_error"></span>
     </div>
     <div class="form-group">
-        <label for="coupon_type">Coupon Type</label>
-        <select class="form-control" name="coupon_type" id="coupon_type">
+        <label for="category">Coupon Type</label>
+        <select class="form-control" name="category" id="category">
             <option value="">Select one</option>
-            <option value="VIP">Vip</option>
-            <option value="ORGANIZATION">Organization</option>
-            <option value="MANAGER">Manager</option>
-            <option value="REGULAR">Regular</option>
+            @forelse($categories as $category)
+                <option value="{{$category->id}}">{{$category->name}}</option>
+            @empty
+                <option value="">No category</option>
+            @endforelse
         </select>
-        <span class="text-danger" id="coupon_type_error"></span>
+        <span class="text-danger" id="category_error"></span>
     </div>
     <div class="form-group">
         <label for="number_of_coupon">Number of coupon</label>
@@ -63,8 +64,9 @@
 
     $(document).on('click','#addBtn',function (event) {
         event.preventDefault();
-        var form = $('#create-form')[0];
+        var form = $('#my-form')[0];
         var formData = new FormData(form);
+        formData.append('test','hello');
 
         // Set header if need any otherwise remove setup part
         $.ajaxSetup({
@@ -85,7 +87,7 @@
 
                 setTimeout(function() {
                     location.reload();
-                }, 3000);
+                }, 2000);
             },
             error: function (data) {
                 var errorMessage = '<div class="card bg-danger">\n' +
@@ -104,19 +106,16 @@
 
     });
 
-
-
     function CollectedUser(){
         let collected_by = document.getElementById('collected_by').value;
         let assigned_to = document.getElementById('assigned_to');
+
         if(collected_by === 'SELF'){
             assigned_to.style.display = "none";
         }else if(collected_by === 'OTHERS'){
             assigned_to.style.display = "block";
         }
     }
-
-
 
 </script>
 

@@ -19,28 +19,40 @@ class CouponController extends Controller
             'Authorization' => 'Token ' . $token,
         ])->get(config('config.base_url').'dashboard/admin-coupons/');
 
-        $data = json_decode($response);
-        $coupons = $data->data;
+        if ($response->status() == 200){
+            $data = json_decode($response);
+            $coupons = $data->data;
+        }else{
+            $coupons =[];
+        }
+
+
 
         $category_response = Http::withHeaders([
             'Authorization' => 'Token ' . $token,
         ])->get(config('config.base_url').'categories/');
 
-        $categories_data = json_decode($category_response);
-        $categories = $categories_data->data;
+        if ($category_response->status() == 200){
+            $categories_data = json_decode($category_response);
+            $categories = $categories_data->data;
+        }else{
+            $categories = [];
+        }
+
 
         $coupons_response = Http::withHeaders([
             'Authorization' => 'Token ' . $token,
         ])->get(config('config.base_url').'dashboard/admin-coupons/');
 
-        $coupons_data = json_decode($coupons_response);
-        $coupons = $coupons_data->data;
-
-        if($data->status == 200){
-            return view('coupon.index',compact(['coupons','categories','coupons']));
+        if ($coupons_response->status() == 200){
+            $coupons_data = json_decode($coupons_response);
+            $coupons = $coupons_data->data;
         }else{
-            return "Something went wrong";
+            $coupons = [];
         }
+//        return $coupons;
+
+        return view('coupon.index',compact(['coupons','categories','coupons']));
     }
 
     /**
@@ -48,7 +60,18 @@ class CouponController extends Controller
      */
     public function create()
     {
-        return view('coupon.create');
+        $token = session('token');
+        $category_response = Http::withHeaders([
+            'Authorization' => 'Token ' . $token,
+        ])->get(config('config.base_url').'categories/');
+
+        if ($category_response->status() == 200){
+            $categories_data = json_decode($category_response);
+            $categories = $categories_data->data;
+        }else{
+            $categories = [];
+        }
+        return view('coupon.create',compact('categories'));
     }
 
     /**
@@ -65,7 +88,7 @@ class CouponController extends Controller
             'description' => $request->input('description'),
             'quantity' => $request->input('quantity'),
             'coupon_quantity' => $request->input('coupon_quantity'),
-            'category' => $request->input('category'),
+            'category_coupon' => $request->input('category_coupon'),
             'size' => $request->input('size'),
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
@@ -75,9 +98,7 @@ class CouponController extends Controller
             'notes' => $request->input('notes'),
             'org' => session('name') ?? null,
         ]);
-
-        $data = json_decode($response);
-        if($data->status == 200){
+        if($response->status() == 200){
             return redirect()->route('employee.index')->with('message', 'Employee created successfully');
         }else{
             return "Something went wrong";

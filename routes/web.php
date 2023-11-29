@@ -7,6 +7,7 @@ use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PackagePricingController;
 use App\Http\Controllers\RegisterController;
@@ -26,6 +27,8 @@ Route::get('/login', [LoginController::class,'index'])->name('login');
 Route::post('/login', [LoginController::class,'store'])->name('login-store');
 Route::get('/register', [RegisterController::class,'index'])->name('register');
 Route::post('/register', [RegisterController::class,'store'])->name('register-store');
+Route::get('/forgot-password', [ForgotPasswordController::class,'index'])->name('forgot-password');
+Route::post('/forgot-password', [ForgotPasswordController::class,'store'])->name('forgot-password-store');
 
 Route::middleware('admin')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -49,6 +52,9 @@ Route::middleware('admin')->group(function () {
     Route::get('/export-excel-file', [CouponAssignController::class,'exportExcelFile'])->name('export-excel-file');
     Route::get('/participant-upload-create', [CouponAssignController::class,'participantUploadCreate'])->name('participant.upload.create');
     Route::post('/participant-upload', [CouponAssignController::class,'participantUpload'])->name('participant.upload');
+
+    Route::get('/export-participants-download', [CouponAssignController::class,'exportParticipantsDownload'])->name('export-participants-download');
+    Route::get('/export-scanner-download', [CouponAssignController::class,'exportScannerDownload'])->name('export-scanner-download');
 
     Route::get('/coupon-assign-list', [CouponAssignController::class,'index'])->name('coupon-assign.index');
     Route::get('/coupon-assign-create', [CouponAssignController::class,'create'])->name('coupon-assign.create');

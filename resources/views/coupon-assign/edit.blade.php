@@ -36,15 +36,16 @@
         <span class="text-danger" id="assign_to_error"></span>
     </div>
     <div class="form-group">
-        <label for="coupon_type">Coupon Type</label>
-        <select class="form-control" name="coupon_type" id="coupon_type">
+        <label for="category">Coupon Type</label>
+        <select class="form-control" name="category" id="category">
             <option value="">Select one</option>
-            <option value="VIP" {{$assign_users->coupon_type == 'VIP' ? 'selected' : ''}}>Vip</option>
-            <option value="ORGANIZATION" {{$assign_users->coupon_type == 'ORGANIZATION' ? 'selected' : ''}}>Organization</option>
-            <option value="VOLUNTEER" {{$assign_users->coupon_type == 'MANAGER' ? 'selected' : ''}}>Manager</option>
-            <option value="JOB_SEEKER" {{$assign_users->coupon_type == 'REGULAR' ? 'selected' : ''}}>Regular</option>
+            @forelse($categories as $category)
+            <option value="{{$category->id}}" {{$assign_users->category->id == $category->id ? 'selected' : ''}}>{{$category->name}}</option>
+            @empty
+                <option value="" >No category</option>
+            @endforelse
         </select>
-        <span class="text-danger" id="coupon_type_error"></span>
+        <span class="text-danger" id="category_error"></span>
     </div>
     <div class="form-group">
         <label for="number_of_coupon">Number of coupon</label>
@@ -85,7 +86,7 @@
 
                 setTimeout(function() {
                     location.reload();
-                }, 3000);
+                }, 2000);
             },
             error: function (data) {
                 var errorMessage = '<div class="card bg-danger">\n' +

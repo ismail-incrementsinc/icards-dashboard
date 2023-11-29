@@ -59,8 +59,7 @@ class EmployeeController extends Controller
             ],
         ]);
 
-        $data = json_decode($response);
-        if($data->status == 200){
+        if($response->status() == 200){
             return redirect()->route('employee.index')->with('message', 'Employee created successfully');
         }else{
             return "Something went wrong";
@@ -87,7 +86,7 @@ class EmployeeController extends Controller
         $data = json_decode($response);
 
         $employee =  $data->data;
-        if($data->status == 200){
+        if($response->status() == 200){
             return view('employee.edit',compact('employee'));
         }else{
             return "Something went wrong";

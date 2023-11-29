@@ -21,15 +21,16 @@
         <span class="text-danger" id="coupon_quantity_error"></span>
     </div>
     <div class="form-group">
-        <label for="category">Coupon Category</label>
-        <select name="category" id="category" class="form-control">
+        <label for="category_coupon">Coupon Category</label>
+        <select name="category_coupon" id="category_coupon" class="form-control">
             <option value="">Select category</option>
-            <option value="VIP">VIP</option>
-            <option value="ORGANIZATION">ORGANIZATION</option>
-            <option value="MANAGER">MANAGER</option>
-            <option value="REGULAR">REGULAR</option>
+            @forelse($categories as $category)
+            <option value="{{$category->id}}">{{$category->name}}</option>
+            @empty
+                <option value="">No category</option>
+            @endforelse
         </select>
-        <span class="text-danger" id="category_error"></span>
+        <span class="text-danger" id="category_coupon_error"></span>
     </div>
     <div class="form-group">
         <label for="size">Item size</label>
@@ -123,7 +124,7 @@
 
                 setTimeout(function() {
                     location.reload();
-                }, 3000);
+                }, 2000);
             },
             error: function (data) {
                 var errorMessage = '<div class="card bg-danger">\n' +

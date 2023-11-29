@@ -1,4 +1,4 @@
-<form id="create-form">
+<form id="scanner-form">
     @csrf
     <div class="form-group">
         <label for="name">Name</label>
@@ -27,7 +27,7 @@
 
     $(document).on('click','#addBtn',function (event) {
         event.preventDefault();
-        var form = $('#create-form')[0];
+        var form = $('#scanner-form')[0];
         var formData = new FormData(form);
 
         // Set header if need any otherwise remove setup part
