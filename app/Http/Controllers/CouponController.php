@@ -40,19 +40,7 @@ class CouponController extends Controller
         }
 
 
-        $coupons_response = Http::withHeaders([
-            'Authorization' => 'Token ' . $token,
-        ])->get(config('config.base_url').'dashboard/admin-coupons/');
-
-        if ($coupons_response->status() == 200){
-            $coupons_data = json_decode($coupons_response);
-            $coupons = $coupons_data->data;
-        }else{
-            $coupons = [];
-        }
-//        return $coupons;
-
-        return view('coupon.index',compact(['coupons','categories','coupons']));
+        return view('coupon.index',compact(['coupons','categories']));
     }
 
     /**
